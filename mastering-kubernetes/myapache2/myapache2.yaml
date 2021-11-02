@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapache2
+spec:
+  containers:
+  - name: myapache2
+    image: dgadiraju/myapache2:latest
+  imagePullSecrets:
+  - name: dockerhub-secret
+

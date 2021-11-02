@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lmsappserver-configmaps
+data:
+  DB_HOST: lmsdbserver
+  DB_PORT: "5432"
+  DB_NAME: lms_db

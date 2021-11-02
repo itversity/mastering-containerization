@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lmsdbserver
+  labels:
+    app: lmsdbserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lmsdbserver
+  template:
+    metadata:
+      labels:
+        app: lmsdbserver
+    spec:
+      containers:
+      - name: lmsdbserver
+        image: postgres:13
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: lmsdbserver-superuser-secret
+              key: superuser-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lmsdbserver
+spec:
+  type: ClusterIP
+  selector:
+    app: lmsdbserver
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432

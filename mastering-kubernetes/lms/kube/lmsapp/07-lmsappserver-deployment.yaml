@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lmsappserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lmsappserver
+  template:
+    metadata:
+      labels:
+        app: lmsappserver
+    spec:
+      containers:
+      - name: lmsappserver
+        image: dgadiraju/lmsapp:1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: lmsappserver-configmaps
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: lmsappserver-configmaps
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: lmsappserver-configmaps
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: lmsappserver-secrets
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: lmsappserver-secrets
+              key: DB_PASS
+      imagePullSecrets:
+      - name: docker-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: itversitylms
+  labels:
+    app: lmsappserver
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  selector:
+    app: lmsappserver
