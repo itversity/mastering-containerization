@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: webpods
-        image: ubuntu/apache2
+        image: nginx
         imagePullPolicy: Always
         ports:
         - containerPort: 80
