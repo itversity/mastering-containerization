@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mynginx
+  labels:
+    app: mynginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mynginx
+  template:
+    metadata:
+      labels:
+        app: mynginx
+    spec:
+      containers:
+      - name: mynginx
+        image: nginx
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
