@@ -33,3 +33,4 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           python3 -m pip install -r /apps/lms/requirements.txt
+          gunicorn --chdir /apps/lms/lms-app -w 2 --threads 2 -b 0.0.0.0:5000 main:app
