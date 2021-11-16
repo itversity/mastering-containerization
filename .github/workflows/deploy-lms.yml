@@ -11,7 +11,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
 
@@ -26,6 +26,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
+  build:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
     - name: Setup and Start Flask Application
       uses: appleboy/ssh-action@master
       with:
@@ -34,5 +38,16 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           python3 -m pip install -r /apps/lms/requirements.txt
+  run:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup and Start Flask Application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
           /home/lms/.local/bin/gunicorn --chdir /apps/lms/lms-app -w 2 --threads 2 -b 0.0.0.0:5000 -D main:app
           
